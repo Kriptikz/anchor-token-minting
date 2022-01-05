@@ -16,6 +16,7 @@ describe('program-token-minting', () => {
 
   const payer = anchor.web3.Keypair.generate();
   const mintA = anchor.web3.Keypair.generate();
+  const payerMintATokenAccount = anchor.web3.Keypair.generate();
 
 
   it('Airdrops SOL to payer', async () => {
@@ -48,4 +49,20 @@ describe('program-token-minting', () => {
 
     assert.equal(TOKEN_PROGRAM_ID.toString(), account_owner.toString());
   });
+
+  it('Creates a Token Account for the Mint', async () => {
+    const tx = await program.rpc.createTokenAccount({
+      accounts: {
+        token: payerMintATokenAccount.publicKey,
+        mint: mintA.publicKey,
+        authority: payer.publicKey,
+        systemProgram: anchor.web3.SystemProgram.programId,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        rent: anchor.web3.SYSVAR_RENT_PUBKEY,
+      },
+      signers: [payer, payerMintATokenAccount]
+    });
+    
+  });
+  
 });
