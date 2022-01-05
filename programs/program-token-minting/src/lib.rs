@@ -7,7 +7,7 @@ declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
 #[program]
 pub mod program_token_minting {
     use super::*;
-    pub fn create_mint(ctx: Context<CreateMint>) -> ProgramResult {
+    pub fn create_mint(_ctx: Context<CreateMint>) -> ProgramResult {
         Ok(())
     }
 }
@@ -21,7 +21,7 @@ pub struct CreateMint<'info> {
         mint::authority = payer,
     )]
     pub mint: Account<'info, Mint>,
-    #[account(signer)]
+    #[account(signer, mut)]
     pub payer: AccountInfo<'info>,
     #[account(address = system_program::ID)]
     pub system_program: AccountInfo<'info>,
