@@ -9,8 +9,8 @@ describe('program-token-minting', () => {
 
   const program = anchor.workspace.ProgramTokenMinting as Program<ProgramTokenMinting>;
 
-  it('Is initialized!', async () => {
-    const tx = await program.rpc.initialize({});
+  it('Create a Mint', async () => {
+    const tx = await program.rpc.createMint({});
     console.log("Your transaction signature", tx);
   });
 });
