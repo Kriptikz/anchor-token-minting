@@ -41,6 +41,7 @@ pub struct CreateTokenAccount<'info> {
     )]
     pub token: Account<'info, TokenAccount>,
     pub mint: Account<'info, Mint>,
+    #[account(mut)]
     pub authority: Signer<'info>,
     pub system_program: Program<'info, System>,
     pub token_program: Program<'info, Token>,
