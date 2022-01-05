@@ -43,6 +43,9 @@ describe('program-token-minting', () => {
       },
       signers: [payer, mintA]
     });
-    console.log("Your transaction signature", tx);
+
+    let account_owner = await (await provider.connection.getAccountInfo(mintA.publicKey)).owner;
+
+    assert.equal(TOKEN_PROGRAM_ID.toString(), account_owner.toString());
   });
 });
