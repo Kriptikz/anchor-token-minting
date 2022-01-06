@@ -1,7 +1,7 @@
 import * as anchor from '@project-serum/anchor';
 import { Program } from '@project-serum/anchor';
 import { ProgramTokenMinting } from '../target/types/program_token_minting';
-import { TOKEN_PROGRAM_ID, Token } from '@solana/spl-token';
+import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { assert } from 'chai';
 
 describe('program-token-minting', () => {
