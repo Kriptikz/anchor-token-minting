@@ -1,6 +1,5 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token::{self, Mint, Token, TokenAccount, MintTo};
-use anchor_lang::solana_program::program_option::COption;
 
 declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
 
@@ -57,10 +56,7 @@ pub struct CreateTokenAccount<'info> {
 pub struct MintTokens<'info> {
     #[account(mut, has_one = mint)]
     pub token: Account<'info, TokenAccount>,
-    #[account(
-        mut,
-        constraint = mint.mint_authority == COption::Some(*mint_authority.key)
-    )]
+    #[account(mut)]
     pub mint: Account<'info, Mint>,
     pub mint_authority: Signer<'info>,
     pub token_program: Program<'info, Token>,

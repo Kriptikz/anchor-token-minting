@@ -19,7 +19,6 @@ describe('program-token-minting', () => {
   const mintA = anchor.web3.Keypair.generate();
   const payerMintATokenAccount = anchor.web3.Keypair.generate();
 
-
   it('Airdrops SOL to payer', async () => {
     console.log("Airdropping SOL");
 
