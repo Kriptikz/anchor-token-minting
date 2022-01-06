@@ -1,7 +1,7 @@
 import * as anchor from '@project-serum/anchor';
 import { Program } from '@project-serum/anchor';
 import { ProgramTokenMinting } from '../target/types/program_token_minting';
-import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import { TOKEN_PROGRAM_ID, Token } from '@solana/spl-token';
 import { assert } from 'chai';
 
 describe('program-token-minting', () => {
@@ -62,6 +62,14 @@ describe('program-token-minting', () => {
       },
       signers: [payer, payerMintATokenAccount]
     });
+
+    let accountInfo = await provider.connection.getParsedAccountInfo(payerMintATokenAccount.publicKey);
+
+    let accountInfoMint = accountInfo.value.data["parsed"]["info"]["mint"];
+    let accountInfoOwner = accountInfo.value.data["parsed"]["info"]["owner"];
+
+    assert.equal(mintA.publicKey.toString(), accountInfoMint);
+    assert.equal(payer.publicKey.toString(), accountInfoOwner);
     
   });
   
