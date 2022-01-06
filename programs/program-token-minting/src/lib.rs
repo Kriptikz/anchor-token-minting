@@ -1,5 +1,6 @@
 use anchor_lang::prelude::*;
-use anchor_spl::token::{Mint, Token, TokenAccount};
+use anchor_spl::token::{self, Mint, Token, TokenAccount, MintTo};
+use anchor_lang::solana_program::program_option::COption;
 
 declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
 
@@ -13,6 +14,10 @@ pub mod program_token_minting {
     pub fn create_token_account(_ctx: Context<CreateTokenAccount>) -> ProgramResult {
         Ok(())
     }
+
+    pub fn mint_tokens(ctx: Context<MintTokens>, amount: u64) -> ProgramResult {
+        token::mint_to((&*ctx.accounts).into(), amount)
+    } 
 }
 
 #[derive(Accounts)]
@@ -46,4 +51,31 @@ pub struct CreateTokenAccount<'info> {
     pub system_program: Program<'info, System>,
     pub token_program: Program<'info, Token>,
     pub rent: Sysvar<'info, Rent>,
+}
+
+#[derive(Accounts)]
+pub struct MintTokens<'info> {
+    #[account(mut, has_one = mint)]
+    pub token: Account<'info, TokenAccount>,
+    #[account(
+        mut,
+        constraint = mint.mint_authority == COption::Some(*mint_authority.key)
+    )]
+    pub mint: Account<'info, Mint>,
+    #[account(mut)] // does this need to be mut?
+    pub mint_authority: Signer<'info>,
+    pub token_program: Program<'info, Token>,
+}
+
+impl<'info> From<&MintTokens<'info>> for CpiContext<'_, '_, '_, 'info, MintTo<'info>> {
+    fn from(accs: &MintTokens<'info>) -> Self {
+        let cpi_program = accs.token_program.to_account_info();
+        let cpi_accounts = MintTo {
+            mint: accs.mint.to_account_info(),
+            to: accs.token.to_account_info(),
+            authority: accs.mint_authority.to_account_info(),
+        };
+
+        CpiContext::new(cpi_program, cpi_accounts)
+    }
 }
