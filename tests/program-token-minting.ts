@@ -13,6 +13,7 @@ describe('program-token-minting', () => {
   const program = anchor.workspace.ProgramTokenMinting as Program<ProgramTokenMinting>;
 
   const airdropAmount = 1_000_000_000;
+  const mintAmount = 100;
 
   const payer = anchor.web3.Keypair.generate();
   const mintA = anchor.web3.Keypair.generate();
@@ -34,7 +35,7 @@ describe('program-token-minting', () => {
   });
 
   it('Creates a Mint', async () => {
-    const tx = await program.rpc.createMint({
+    await program.rpc.createMint({
       accounts: {
         mint: mintA.publicKey,
         payer: payer.publicKey,
@@ -51,7 +52,7 @@ describe('program-token-minting', () => {
   });
 
   it('Creates a Token Account for the Mint', async () => {
-    const tx = await program.rpc.createTokenAccount({
+    await program.rpc.createTokenAccount({
       accounts: {
         token: payerMintATokenAccount.publicKey,
         mint: mintA.publicKey,
@@ -72,5 +73,19 @@ describe('program-token-minting', () => {
     assert.equal(payer.publicKey.toString(), accountInfoOwner);
     
   });
-  
+ 
+  it('Mints new tokens to account', async () => {
+    await program.rpc.mintTokens(new anchor.BN(mintAmount), {
+      accounts: {
+        token: payerMintATokenAccount.publicKey,
+        mint: mintA.publicKey,
+        mintAuthority: payer.publicKey,
+        tokenProgram: TOKEN_PROGRAM_ID,
+      },
+      signers: [payer]
+    });
+
+    let balance = await (await provider.connection.getTokenAccountBalance(payerMintATokenAccount.publicKey)).value.amount;
+    assert.equal(mintAmount, balance);
+  }); 
 });
