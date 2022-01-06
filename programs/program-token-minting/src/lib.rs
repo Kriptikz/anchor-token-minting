@@ -62,7 +62,6 @@ pub struct MintTokens<'info> {
         constraint = mint.mint_authority == COption::Some(*mint_authority.key)
     )]
     pub mint: Account<'info, Mint>,
-    #[account(mut)] // does this need to be mut?
     pub mint_authority: Signer<'info>,
     pub token_program: Program<'info, Token>,
 }
